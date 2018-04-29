@@ -11,14 +11,14 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 
 @SpringBootApplication(scanBasePackages = { "com.pearlin.whatflix.movie.details.migration",
-		"com.pearlin.whatflix.movie.details.persistence.elasticsearch" })
+		"com.pearlin.whatflix.movie.details.persistence" })
 public class MovieDetailsInitialMigrationApplication {
 
 	private static final Logger logger = LoggerFactory.getLogger(MovieDetailsInitialMigrationApplication.class);
 
 	public static void main(String... args) {
 		long start = System.currentTimeMillis();
-		SpringApplication app = new SpringApplicationBuilder(MovieDetailsInitialMigration.class).build();
+		SpringApplication app = new SpringApplicationBuilder(MovieDetailsInitialMigrationApplication.class).build();
 		Map<String, Object> defaultProperties = new HashMap<String, Object>();
 		defaultProperties.put("spring.config.name", "migration");
 		app.setDefaultProperties(defaultProperties);

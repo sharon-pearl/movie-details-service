@@ -1,5 +1,11 @@
+migration:
+  initial:
+    file:
+      credits: /migration/initial/credits.csv
+      movies: /migration/initial/movies.csv
 spring:
   main:
     web-environment: false
-migration.initial.file.credits: /migration/initial/credits.csv
-migration.initial.file.movies: /migration/initial/movies.csv
+  data:
+    elasticsearch:
+      cluster-nodes: localhost:9300

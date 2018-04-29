@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,62 +16,75 @@ public class MovieEntity {
 	// TODO Builder Pattern
 
 	@Id
-	@JsonProperty("id")
-	String id;
+	private String id;
 
 	@JsonProperty("title")
-	String title;
+	private String title;
 
 	@JsonProperty("original_title")
-	String originalTitle;
+	private String originalTitle;
 
 	@JsonProperty("original_language")
-	String language;
+	private String language;
 
 	@JsonProperty("tagline")
-	String tagline;
+	private String tagline;
 
 	@JsonProperty("vote_average")
-	Double voteAverage;
+	private Double voteAverage;
 
 	@JsonProperty("vote_count")
-	Long voteCount;
+	private Long voteCount;
 
 	@JsonProperty("budget")
-	Long budget;
+	private Long budget;
 
 	@JsonProperty("genre")
-	List<String> genre;
+	private List<String> genre;
 
 	@JsonProperty("keywords")
-	List<String> keywords;
+	private List<String> keywords;
 
 	@JsonProperty("website")
-	String website;
+	private String website;
 
 	@JsonProperty("overview")
-	String overview;
+	private String overview;
 
 	@JsonProperty("production_companies")
-	List<String> productionCompanies;
+	private List<String> productionCompanies;
 
 	@JsonProperty("production_countries")
-	List<String> productionCountries;
+	private List<String> productionCountries;
 
+	@Field(type = FieldType.Date)
 	@JsonProperty("release_date")
-	Date releaseDate;
+	private Date releaseDate;
 
 	@JsonProperty("revenue")
-	Long revenue;
+	private Long revenue;
 
 	@JsonProperty("spoken_languages")
-	List<String> spokenLanguages;
+	private List<String> spokenLanguages;
 
 	@JsonProperty("runtime")
-	Double runtime;
+	private Double runtime;
 
 	@JsonProperty("status")
-	String status;
+	private String status;
+
+	@Field(type = FieldType.Date)
+	@JsonProperty("create_date")
+	private Date createDate;
+
+	@Field(type = FieldType.Date)
+	@JsonProperty("update_date")
+	private Date updateDate;
+
+	public MovieEntity() {
+		createDate = new Date();
+		updateDate = new Date();
+	}
 
 	public String getId() {
 		return id;
@@ -223,6 +238,22 @@ public class MovieEntity {
 		this.status = status;
 	}
 
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+
 	@Override
 	public String toString() {
 		return "MovieEntity [id=" + id + ", title=" + title + ", originalTitle=" + originalTitle + ", language="
@@ -230,7 +261,8 @@ public class MovieEntity {
 				+ ", budget=" + budget + ", genre=" + genre + ", keywords=" + keywords + ", website=" + website
 				+ ", overview=" + overview + ", productionCompanies=" + productionCompanies + ", productionCountries="
 				+ productionCountries + ", releaseDate=" + releaseDate + ", revenue=" + revenue + ", spokenLanguages="
-				+ spokenLanguages + ", runtime=" + runtime + ", status=" + status + "]";
+				+ spokenLanguages + ", runtime=" + runtime + ", status=" + status + ", createDate=" + createDate
+				+ ", updateDate=" + updateDate + "]";
 	}
 
 }
