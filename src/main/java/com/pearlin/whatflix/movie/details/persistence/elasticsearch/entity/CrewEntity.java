@@ -1,12 +1,9 @@
 package com.pearlin.whatflix.movie.details.persistence.elasticsearch.entity;
 
-import org.springframework.data.annotation.Id;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CrewEntity {
 
-	@Id
 	@JsonProperty("id")
 	private Long id;
 

@@ -11,7 +11,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 
 @SpringBootApplication(scanBasePackages = { "com.pearlin.whatflix.movie.details.migration",
-		"com.pearlin.whatflix.movie.details.persistence" })
+		"com.pearlin.whatflix.movie.details.persistence", "com.pearlin.whatflix.movie.details.service" })
 public class MovieDetailsInitialMigrationApplication {
 
 	private static final Logger logger = LoggerFactory.getLogger(MovieDetailsInitialMigrationApplication.class);

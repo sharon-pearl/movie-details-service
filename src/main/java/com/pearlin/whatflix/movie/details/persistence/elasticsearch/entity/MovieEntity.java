@@ -3,7 +3,9 @@ package com.pearlin.whatflix.movie.details.persistence.elasticsearch.entity;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -14,6 +16,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class MovieEntity {
 
 	// TODO Builder Pattern
+
+	public static final String CAST = "cast";
+	public static final String CREW = "crew";
 
 	@Id
 	private String id;
@@ -75,15 +80,30 @@ public class MovieEntity {
 
 	@Field(type = FieldType.Date)
 	@JsonProperty("create_date")
+	@CreatedDate
 	private Date createDate;
 
 	@Field(type = FieldType.Date)
 	@JsonProperty("update_date")
 	private Date updateDate;
 
+	@Field(type = FieldType.Object)
+	@JsonProperty(CAST)
+	private List<CastEntity> cast;
+
+	@Field(type = FieldType.Object)
+	@JsonProperty(CREW)
+	private List<CrewEntity> crew;
+
+	@Version
+	private Long version;
+
 	public MovieEntity() {
-		createDate = new Date();
 		updateDate = new Date();
+	}
+
+	public MovieEntity(String id) {
+		this.id = id;
 	}
 
 	public String getId() {
@@ -254,6 +274,30 @@ public class MovieEntity {
 		this.updateDate = updateDate;
 	}
 
+	public List<CastEntity> getCast() {
+		return cast;
+	}
+
+	public void setCast(List<CastEntity> cast) {
+		this.cast = cast;
+	}
+
+	public List<CrewEntity> getCrew() {
+		return crew;
+	}
+
+	public void setCrew(List<CrewEntity> crew) {
+		this.crew = crew;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
 	@Override
 	public String toString() {
 		return "MovieEntity [id=" + id + ", title=" + title + ", originalTitle=" + originalTitle + ", language="
@@ -262,7 +306,6 @@ public class MovieEntity {
 				+ ", overview=" + overview + ", productionCompanies=" + productionCompanies + ", productionCountries="
 				+ productionCountries + ", releaseDate=" + releaseDate + ", revenue=" + revenue + ", spokenLanguages="
 				+ spokenLanguages + ", runtime=" + runtime + ", status=" + status + ", createDate=" + createDate
-				+ ", updateDate=" + updateDate + "]";
+				+ ", updateDate=" + updateDate + " , cast=" + cast + ", crew=" + crew + ", version=" + version + "]";
 	}
-
 }

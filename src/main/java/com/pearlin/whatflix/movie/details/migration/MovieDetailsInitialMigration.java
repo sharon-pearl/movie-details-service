@@ -21,11 +21,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.opencsv.CSVReader;
 import com.pearlin.whatflix.movie.details.persistence.elasticsearch.entity.CastEntity;
-import com.pearlin.whatflix.movie.details.persistence.elasticsearch.entity.CreditsEntity;
 import com.pearlin.whatflix.movie.details.persistence.elasticsearch.entity.CrewEntity;
 import com.pearlin.whatflix.movie.details.persistence.elasticsearch.entity.MovieEntity;
-import com.pearlin.whatflix.movie.details.persistence.elasticsearch.repo.CreditsRepository;
 import com.pearlin.whatflix.movie.details.persistence.elasticsearch.repo.MovieRepository;
+import com.pearlin.whatflix.movie.details.service.MovieSearchService;
 
 @Component
 public class MovieDetailsInitialMigration {
@@ -34,7 +33,7 @@ public class MovieDetailsInitialMigration {
 	private MovieRepository movieRepository;
 
 	@Autowired
-	private CreditsRepository creditsRepository;
+	private MovieSearchService movieSearchService;
 
 	private static final Logger logger = LoggerFactory.getLogger(MovieDetailsInitialMigration.class);
 
@@ -51,8 +50,9 @@ public class MovieDetailsInitialMigration {
 	private Map<Integer, String> genders;
 
 	private long moviesInsertedCount = 0l;
-
 	private long creditsInsertedCount = 0l;
+	private long creditErrorCount = 0l;
+	private long movieErrorCount = 0l;
 
 	private static final String NAME = "name";
 	private static final String ID = "id";
@@ -84,7 +84,9 @@ public class MovieDetailsInitialMigration {
 		}
 
 		logger.info("Movies inserted : " + moviesInsertedCount);
+		logger.info("Movies error : " + movieErrorCount);
 		logger.info("Credits inserted : " + creditsInsertedCount);
+		logger.info("Credits error: " + creditErrorCount);
 		return true;
 	}
 
@@ -94,68 +96,91 @@ public class MovieDetailsInitialMigration {
 			reader.readNext();
 			String[] line = reader.readNext();
 			while (line != null) {
-				CreditsEntity entity = parseLineForCreditsEntity(line);
+				String movieId = getMovieIdForCreditsEntity(line);
+				List<CastEntity> cast = getCastForCreditsEntity(line);
+				List<CrewEntity> crew = getCrewForCreditsEntity(line);
 				// TODO check batch insert
 				try {
-					creditsRepository.index(entity);
-					++creditsInsertedCount;
+					if (cast != null || crew != null) {
+						movieSearchService.updateCastAndCrew(movieId, cast, crew);
+						++creditsInsertedCount;
+					} else {
+						++creditErrorCount;
+					}
 				} catch (Exception e) {
-					logger.error("error while inserting credits entity " + line[0], e);
+					++creditErrorCount;
+					logger.error("Error while updating cast and crew for movie id : " + movieId
+							+ " with cast and crew as " + cast + crew + line[0], e);
 				}
 				line = reader.readNext();
 			}
 		}
 	}
 
-	private CreditsEntity parseLineForCreditsEntity(String[] data) {
-		CreditsEntity entity = null;
+	private String getMovieIdForCreditsEntity(String[] data) {
+		String movieId = null;
 		try {
-			String movieId = data[0];
-			String title = data[1];
-			JsonArray cast = (JsonArray) jsonParser.parse(data[2]);
-			JsonArray crew = (JsonArray) jsonParser.parse(data[3]);
-
-			entity = new CreditsEntity();
-			entity.setCast(parseJsonForCast(cast));
-			entity.setCrew(parseJsonForCrew(crew));
-			entity.setTitle(title);
-			entity.setMovieid(movieId);
+			movieId = data[0];
 		} catch (Exception e) {
 			logger.error("Error while parsing : " + data[0], e);
 		}
-		return entity;
+		return movieId;
+	}
+
+	private List<CastEntity> getCastForCreditsEntity(String[] data) {
+		JsonArray cast = null;
+		try {
+			cast = (JsonArray) jsonParser.parse(data[2]);
+		} catch (Exception e) {
+			logger.error("Error while parsing : " + data[0], e);
+		}
+		return parseJsonForCast(cast);
+	}
+
+	private List<CrewEntity> getCrewForCreditsEntity(String[] data) {
+		JsonArray crew = null;
+		try {
+			crew = (JsonArray) jsonParser.parse(data[3]);
+		} catch (Exception e) {
+			logger.error("Error while parsing : " + data[0], e);
+		}
+		return parseJsonForCrew(crew);
 	}
 
 	private List<CastEntity> parseJsonForCast(JsonArray array) {
 		List<CastEntity> entities = new ArrayList<CastEntity>();
-		array.forEach(v -> {
-			JsonObject obj = (JsonObject) v;
-			CastEntity entity = new CastEntity();
-			entity.setCastId(obj.get(CAST_ID).getAsLong());
-			entity.setCharacter(obj.get(CHARACTER).getAsString());
-			entity.setCreditId(obj.get(CREDIT_ID).getAsString());
-			entity.setGender(genders.get(obj.get(GENDER).getAsInt()));
-			entity.setId(obj.get(ID).getAsLong());
-			entity.setName(obj.get(NAME).getAsString());
-			entity.setOrder(obj.get(ORDER).getAsLong());
-			entities.add(entity);
-		});
+		if (array != null) {
+			array.forEach(v -> {
+				JsonObject obj = (JsonObject) v;
+				CastEntity entity = new CastEntity();
+				entity.setCastId(obj.get(CAST_ID).getAsLong());
+				entity.setCharacter(obj.get(CHARACTER).getAsString());
+				entity.setCreditId(obj.get(CREDIT_ID).getAsString());
+				entity.setGender(genders.get(obj.get(GENDER).getAsInt()));
+				entity.setId(obj.get(ID).getAsLong());
+				entity.setName(obj.get(NAME).getAsString());
+				entity.setOrder(obj.get(ORDER).getAsLong());
+				entities.add(entity);
+			});
+		}
 		return entities.size() > 0 ? entities : null;
 	}
 
 	private List<CrewEntity> parseJsonForCrew(JsonArray array) {
 		List<CrewEntity> entities = new ArrayList<CrewEntity>();
-		array.forEach(v -> {
-			JsonObject obj = (JsonObject) v;
-			CrewEntity entity = new CrewEntity();
-			entity.setDepartment(obj.get(DEPARTMENT).getAsString());
-			entity.setCreditId(obj.get(CREDIT_ID).getAsString());
-			entity.setGender(genders.get(obj.get(GENDER).getAsInt()));
-			entity.setId(obj.get(ID).getAsLong());
-			entity.setName(obj.get(NAME).getAsString());
-			entity.setJob(obj.get(JOB).getAsString());
-			entities.add(entity);
-		});
+		if (array != null) {
+			array.forEach(v -> {
+				JsonObject obj = (JsonObject) v;
+				CrewEntity entity = new CrewEntity();
+				entity.setDepartment(obj.get(DEPARTMENT).getAsString());
+				entity.setCreditId(obj.get(CREDIT_ID).getAsString());
+				entity.setGender(genders.get(obj.get(GENDER).getAsInt()));
+				entity.setId(obj.get(ID).getAsLong());
+				entity.setName(obj.get(NAME).getAsString());
+				entity.setJob(obj.get(JOB).getAsString());
+				entities.add(entity);
+			});
+		}
 		return entities.size() > 0 ? entities : null;
 	}
 
@@ -168,9 +193,13 @@ public class MovieDetailsInitialMigration {
 				MovieEntity entity = parseLineForMovieEntity(line);
 				// TODO check batch insert
 				try {
-					movieRepository.index(entity);
-					++moviesInsertedCount;
+					if (entity != null) {
+						entity.setVersion(System.nanoTime());
+						movieRepository.save(entity);
+						++moviesInsertedCount;
+					}
 				} catch (Exception e) {
+					++movieErrorCount;
 					logger.error("error while inserting movie entity " + line[3], e);
 				}
 				line = reader.readNext();
