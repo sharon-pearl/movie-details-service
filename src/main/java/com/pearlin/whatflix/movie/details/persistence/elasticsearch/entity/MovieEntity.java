@@ -19,72 +19,95 @@ public class MovieEntity {
 
 	public static final String CAST = "cast";
 	public static final String CREW = "crew";
+	public static final String ORIGINAL_LANGUAGE = "original_language";
+	public static final String TAGLINE = "tagline";
+	public static final String GENRE = "genre";
+	public static final String KEYWORDS = "keywords";
+	public static final String TITLE = "title";
+	public static final String ORIGINAL_TITLE = "original_title";
+	public static final String VOTE_AVERAGE = "vote_average";
+	public static final String VOTE_COUNT = "vote_count";
+	public static final String BUDGET = "budget";
+	public static final String WEBSITE = "website";
+	public static final String OVERVIEW = "overview";
+	public static final String PRODUCTION_COMPANIES = "production_companies";
+	public static final String PRODUCTION_COUNTRIES = "production_countries";
+	public static final String RELEASE_DATE = "release_date";
+	public static final String REVENUE = "revenue";
+	public static final String SPOKEN_LANGUAGES = "spoken_languages";
+	public static final String STATUS = "status";
+	public static final String CREATE_DATE = "create_date";
+	public static final String UPDATE_DATE = "update_date";
+	public static final String RUNTIME = "runtime";
+
+	public static final String BOOST_SEPARATOR = "^";
+	public static final String SEPARATOR = ".";
 
 	@Id
 	private String id;
 
-	@JsonProperty("title")
+	@JsonProperty(TITLE)
 	private String title;
 
-	@JsonProperty("original_title")
+	@JsonProperty(ORIGINAL_TITLE)
 	private String originalTitle;
 
-	@JsonProperty("original_language")
+	@JsonProperty(ORIGINAL_LANGUAGE)
 	private String language;
 
-	@JsonProperty("tagline")
+	@JsonProperty(TAGLINE)
 	private String tagline;
 
-	@JsonProperty("vote_average")
+	@JsonProperty(VOTE_AVERAGE)
 	private Double voteAverage;
 
-	@JsonProperty("vote_count")
+	@JsonProperty(VOTE_COUNT)
 	private Long voteCount;
 
-	@JsonProperty("budget")
+	@JsonProperty(BUDGET)
 	private Long budget;
 
-	@JsonProperty("genre")
+	@JsonProperty(GENRE)
 	private List<String> genre;
 
-	@JsonProperty("keywords")
+	@JsonProperty(KEYWORDS)
 	private List<String> keywords;
 
-	@JsonProperty("website")
+	@JsonProperty(WEBSITE)
 	private String website;
 
-	@JsonProperty("overview")
+	@JsonProperty(OVERVIEW)
 	private String overview;
 
-	@JsonProperty("production_companies")
+	@JsonProperty(PRODUCTION_COMPANIES)
 	private List<String> productionCompanies;
 
-	@JsonProperty("production_countries")
+	@JsonProperty(PRODUCTION_COUNTRIES)
 	private List<String> productionCountries;
 
 	@Field(type = FieldType.Date)
-	@JsonProperty("release_date")
+	@JsonProperty(RELEASE_DATE)
 	private Date releaseDate;
 
-	@JsonProperty("revenue")
+	@JsonProperty(REVENUE)
 	private Long revenue;
 
-	@JsonProperty("spoken_languages")
+	@JsonProperty(SPOKEN_LANGUAGES)
 	private List<String> spokenLanguages;
 
-	@JsonProperty("runtime")
+	@JsonProperty(RUNTIME)
 	private Double runtime;
 
-	@JsonProperty("status")
+	@JsonProperty(STATUS)
 	private String status;
 
 	@Field(type = FieldType.Date)
-	@JsonProperty("create_date")
+	@JsonProperty(CREATE_DATE)
 	@CreatedDate
 	private Date createDate;
 
 	@Field(type = FieldType.Date)
-	@JsonProperty("update_date")
+	@JsonProperty(UPDATE_DATE)
 	private Date updateDate;
 
 	@Field(type = FieldType.Object)

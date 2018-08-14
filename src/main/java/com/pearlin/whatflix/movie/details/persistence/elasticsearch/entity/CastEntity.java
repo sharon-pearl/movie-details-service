@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CastEntity {
 
+	public static final String NAME = "name";
+	
 	@Id
 	@JsonProperty("id")
 	private Long id;
@@ -19,7 +21,7 @@ public class CastEntity {
 	@JsonProperty("gender")
 	private String gender;
 
-	@JsonProperty("name")
+	@JsonProperty(NAME)
 	private String name;
 
 	@JsonProperty("order")

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pearlin.whatflix.movie.details.persistence.elasticsearch.entity.MovieEntity;
 import com.pearlin.whatflix.movie.details.service.MovieSearchService;
 import com.pearlin.whatflix.movie.details.service.entities.SearchAndUserPreferences;
 
@@ -23,9 +24,9 @@ public class MovieSearchController {
 	private MovieSearchService movieSearchService;
 
 	@RequestMapping(method = RequestMethod.POST, value = "/search", produces = "application/json", consumes = "application/json")
-	public List<String> getUserPreference(@RequestBody SearchAndUserPreferences entity) {
+	public List<MovieEntity> getUserPreference(@RequestBody SearchAndUserPreferences entity) {
 		logger.info(entity.toString());
-		List<String> result = movieSearchService.getRelevantMovies(entity);
+		List<MovieEntity> result = movieSearchService.getRelevantMovies(entity);
 		return result;
 	}
 

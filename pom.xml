@@ -49,7 +49,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>com.pearlin.whatflix.movie.details.migration.MovieDetailsInitialMigrationApplication</mainClass>
+					<mainClass>com.pearlin.whatflix.movie.details.server.MovieDetailsServer</mainClass>
 				</configuration>
 				<executions>
 					<execution>
